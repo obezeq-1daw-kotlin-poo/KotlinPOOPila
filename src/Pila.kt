@@ -1,15 +1,23 @@
-class Pila<T> (val desc: String) {
+class Pila<T> (val desc: String, private val patron: String = "") {
 
     private val elementos = mutableListOf<T>()
 
-    constructor(desc: String, vararg elementos: T) : this(desc) {
-        for (elemento in elementos) {
-            this.elementos.add(elemento)
-        }
+    constructor(desc: String, vararg elementos: T, patron: String = "") : this(desc, patron) {
+        addElements(elementos.toList())
+    }
+
+    constructor(desc: String, elementos: List<T>, patron: String = "") : this(desc, patron) {
+        addElements(elementos)
     }
 
     private fun size() = elementos.size
     private fun isEmpty() = size() == 0
+
+    private fun addElements(elementos: List<T>) {
+        for (elemento in elementos) {
+            push(elemento)
+        }
+    }
 
     fun pop() : T? {
         if(!isEmpty()) {
@@ -21,12 +29,18 @@ class Pila<T> (val desc: String) {
         }
     }
 
-    fun push(elemento: T?): Boolean {
-        if (elemento != null) {
+    private fun checkElement(elemento: T): Boolean {
+        if (elemento == null) return false
+        if (elemento !is String || Regex(patron).matches(elemento)) return true
+        return false
+    }
+
+    fun push(elemento: T): Boolean {
+        if (checkElement(elemento)) {
             elementos.add(elemento)
             return true
-        } else {
-
         }
+        return false
+
     }
 }
